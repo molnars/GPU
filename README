@@ -1,0 +1,141 @@
+
+
+
+
+GPedit.msc install on Windows home edition  (ref: https://answers.microsoft.com/en-us/windows/forum/all/how-to-enable-the-gpeditmsc-on-windows-10-and-11/dbc76919-f2b5-4dec-a2b7-bcf545c34d00)
+FOR %F IN ("%SystemRoot%\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientTools-Package~*.mum") DO (DISM /Online /NoRestart /Add-Package:"%F")
+FOR %F IN ("%SystemRoot%\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientExtensions-Package~*.mum") DO (DISM /Online /NoRestart /Add-Package:"%F")
+
+Windows configuration for headless GPU display settings: (Ref: https://www.reddit.com/r/PleX/comments/15ukivg/comment/jzz13yu/?context=3)
+
+
+passthrough fix ups: (Ref: https://www.reddit.com/r/homelab/comments/b5xpua/the_ultimate_beginners_guide_to_gpu_passthrough/)
+
+proxmox configurations: (Ref: https://drive.google.com/drive/folders/1W4Qf0woR3vnaDQB60ope-YvZ1X2TwiUB)
+--SSH into Proxmox--
+
+--Enable IOMMU--
+
+nano /etc/default/grub
+
+GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt"
+	- OR -
+GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
+
+update-grub
+
+
+--Enable VFIO--
+
+nano /etc/modules
+
+vfio
+vfio_iommu_type1
+vfio_pci
+vfio_virqfd
+
+
+--Blacklist Linux Host Drivers--
+
+
+echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
+echo "blacklist nvidia" >> /etc/modprobe.d/blacklist.conf
+echo "blacklist radeon" >> /etc/modprobe.d/blacklist.conf
+
+update-initramfs -u
+
+
+--REBOOT Proxmox--
+
+
+--Install Windows VM--
+
+Guest OS: Windows
+BIOS: OVMF UEFI
+Machine: q35
+Memory: *UNCHECK* Ballooning Device
+
+Add -> PCI Device
+
+Select your GPU core from the dropdown list.
+Check "All Functions" and "PCI-Express"
+
+Install Windows
+
+
+--Software Setup--
+
+Download + Install latest drivers for your GPU
+https://www.nvidia.com/drivers
+https://www.amd.com/en/support
+
+Download + Install VB-Audio Virtual Audio Cable
+
+Download + Install TightVNC
+https://www.tightvnc.com/download.php
+(Install as a service)
+
+Download USBMMIDD Virtual Display Adapter
+
+Download Parsec
+https://parsec.app/
+
+
+--Enable nVidia Boost + Rendering--
+
+Open CMD Prompt as Administrator
+
+Navigate to C:\Program Files\NVidia Corporation\NVSMI
+
+"nvidia-smi -dm 0"
+
+Open Windows Registry (regedit)
+
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\####
+
+The #### will vary depending on your setup. Locate your nVidia Tesla or AMD FirePro adapter in one of these folders
+
+Delete "AdapterType" registry entry
+
+
+--REBOOT VM--
+
+
+--Configure USB Monitor Driver + Parsec--
+
+Connect to VM via TightVNC
+
+Unzip "usbmmidd.zip" to C:\usbmmidd\
+
+Run usbmmidd.bat as Administrator
+
+Install Parsec
+(Install as Shared)
+
+Log into Parsec
+
+Settings -> Host
+
+Resolution: 1920x1080
+Bandwidth: 25Mb (recommended for LAN)
+Monitor: "Generic PnP Monitor" (should be 2nd option)
+
+Right-click on Desktop -> Display Settings
+
+Under "Multiple Displays", select "Show only on 2"
+
+Open Notepad
+
+c:\usbmmidd\deviceinstaller64 enableidd 1
+
+Save as "start.bat" to C:\usbmmidd\
+
+Open Group Policy Editor (gpedit.msc)
+
+Computer Configuration -> Windows Settings -> Scripts -> Startup
+
+Add "C:\usbmmidd\start.bat"
+
+OK + Close out of gpedit.msc
+
+--REBOOT--
