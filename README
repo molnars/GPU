@@ -60,6 +60,11 @@ Add -> PCI Device
 Select your GPU core from the dropdown list.
 Check "All Functions" and "PCI-Express"
 
+Edit the VM config file directly:
+nano /etc/pve/qumu-server/100.conf >>>
+cpu: host,hidden=1,flags=+pcid,+kvm_pv_unhalt,+kvm_pv_eoi,hv_vendor_id=NV43FIX
+
+
 Install Windows
 
 
