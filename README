@@ -46,6 +46,13 @@ update-initramfs -u
 
 
 --REBOOT Proxmox--
+--INSTALL CentOS Stream 9--
+
+sudo dnf config-manager --set-enabled crb
+sudo dnf install epel-release epel-next-release
+sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r) tar bzip2 make automake gcc gcc-c++ pciutils elfutils-libelf-devel libglvnd-opengl libglvnd-glx libglvnd-devel acpid pkgconfig dkms
+sudo dnf module -y install nvidia-driver:latest-dkms
+
 
 
 --Install Windows VM--
