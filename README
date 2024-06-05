@@ -48,9 +48,12 @@ update-initramfs -u
 --REBOOT Proxmox--
 --INSTALL CentOS Stream 9--
 
+ref: https://linuxhint.com/install-nvidia-drivers-centos/
+
 sudo dnf config-manager --set-enabled crb
 sudo dnf install epel-release epel-next-release
 sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r) tar bzip2 make automake gcc gcc-c++ pciutils elfutils-libelf-devel libglvnd-opengl libglvnd-glx libglvnd-devel acpid pkgconfig dkms
+sudo dnf config-manager --add-repo http://developer.download.nvidia.com/compute/cuda/repos/rhel9/$(uname -i)/cuda-rhel9.repo
 sudo dnf module -y install nvidia-driver:latest-dkms
 
 
