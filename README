@@ -72,6 +72,8 @@ nano /etc/pve/qumu-server/100.conf >>>
 cpu: host,hidden=1,flags=+pcid
 args: -cpu 'host,+kvm_pv_unhalt,+kvm_pv_eoi,hv_vendor_id=NV43FIX,kvm=off'
 
+$qm set <vmid> -args '-global q35-pcihost.pci-hole64-size=512G’
+
 
 Install Windows
 
