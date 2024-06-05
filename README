@@ -50,6 +50,8 @@ update-initramfs -u
 
 ref: https://linuxhint.com/install-nvidia-drivers-centos/
 
+Make sure Secure Boot is disabled otherwise nvidia drivers don't get loaded!
+
 sudo dnf config-manager --set-enabled crb
 sudo dnf install epel-release epel-next-release
 sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r) tar bzip2 make automake gcc gcc-c++ pciutils elfutils-libelf-devel libglvnd-opengl libglvnd-glx libglvnd-devel acpid pkgconfig dkms
