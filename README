@@ -57,8 +57,17 @@ sudo dnf install epel-release epel-next-release
 sudo dnf install kernel-headers-$(uname -r) kernel-devel-$(uname -r) tar bzip2 make automake gcc gcc-c++ pciutils elfutils-libelf-devel libglvnd-opengl libglvnd-glx libglvnd-devel acpid pkgconfig dkms
 sudo dnf config-manager --add-repo http://developer.download.nvidia.com/compute/cuda/repos/rhel9/$(uname -i)/cuda-rhel9.repo
 sudo dnf module -y install nvidia-driver:latest-dkms
+sudo reboot
+
+lsmod|grep -i nvi
+lspci -k |grep -i nvi
 
 
+Ollama deploy:
+curl -fsSL https://ollama.com/install.sh | sh
+
+docker/podman nvidia support:
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html
 
 --Install Windows VM--
 
